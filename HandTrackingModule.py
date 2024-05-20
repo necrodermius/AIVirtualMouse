@@ -13,7 +13,7 @@ class handDetector():
         self.trackCon = trackCon
 
         self.mpHands = mp.solutions.hands
-        self.hands = self.mpHands.Hands(self.mode, self.maxHands, 0, self.detectionCon, self.trackCon)
+        self.hands = self.mpHands.Hands(self.mode, self.maxHands, 1, self.detectionCon, self.trackCon)
         self.mpDraw = mp.solutions.drawing_utils
         self.tipIds = [4, 8, 12, 16, 20]
 
@@ -109,6 +109,7 @@ def main():
         lmList, bbox = detector.findPosition(img)
         if len(lmList) != 0:
             print(lmList[4])
+        detector.fingersDown()
 
         cTime = time.time()
         fps = 1 / (cTime - pTime)
