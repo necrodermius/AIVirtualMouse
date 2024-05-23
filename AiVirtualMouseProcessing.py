@@ -4,10 +4,12 @@ import HandTrackingModule as htm
 import time
 import autopy 
 import pyautogui
+from PyQt6.QtCore import QThread
 from settings import wCam, hCam, frameR, smoothening, press_length
 
-class AiVirtualMouse:
+class AiVirtualMouse(QThread):
     def __init__(self) -> None:
+        super().__init__()
         self.plocX = 0
         self.plocY = 0
         self.clocX = 0
@@ -30,6 +32,8 @@ class AiVirtualMouse:
         
         self.wScr, self.hScr = autopy.screen.size()
         self.fps = None
+        
+        self.Running = True
 
 
     def FindFingers(self):
@@ -117,8 +121,9 @@ class AiVirtualMouse:
         cv2.putText(self.img, str(self.is_dragged), (230, 50), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3 )
 
 
-    def Run(self):
-        while True:
+    def Run(self, running, ShowVideo):
+        self.Running = running
+        while self.Running:
             self.FindFingers()
             self.CheckFingers()
             
@@ -138,7 +143,11 @@ class AiVirtualMouse:
                 self.is_dragged = False
                 pyautogui.mouseUp()
                 
-            self.FrameCalculating()
-            # 12. Display
-            cv2.imshow("Image", self.img)
-            cv2.waitKey(1)
+            if ShowVideo:
+                self.FrameCalculating()
+                cv2.imshow("Image", self.img)
+                cv2.waitKey(1)
+
+    def Stop(self):
+        self.Running = False
+        cv2.destroyAllWindows()

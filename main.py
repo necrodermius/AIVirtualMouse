@@ -1,4 +1,8 @@
-import AiVirtualMouseProcessing as avmp
+import Interface as i
+import sys
 
-mouse = avmp.AiVirtualMouse()
-mouse.Run()
+app = i.QApplication(sys.argv)
+window = app.MainWindow()
+window.show()
+sys.exit(app.exec())
+
