@@ -62,8 +62,15 @@ class MainWindow(QMainWindow):
     def start_program(self):
         if self.mouse is None:
             self.mouse = avmp.AiVirtualMouse()
+            self.thread = QThread()
+            self.mouse.moveToThread(self.thread)
+            self.mouse.SetupRun(running=True, ShowVideo=False)
+            self.thread.started.connect(self.mouse.run)
+            self.mouse.finished.connect(self.thread.quit)
+            self.mouse.finished.connect(self.mouse.deleteLater)
+            self.thread.finished.connect(self.thread.deleteLater)
+            self.thread.start()
             self.start_button.setText("Зупинити програму")
-            self.mouse.Run(running=True, ShowVideo=False)
         else:
             self.mouse.Stop()
             self.start_button.setText("Запустити програму")
@@ -73,9 +80,15 @@ class MainWindow(QMainWindow):
     def start_program_camera(self):
         if self.mouse is None:
             self.mouse = avmp.AiVirtualMouse()
+            self.thread = QThread()
+            self.mouse.moveToThread(self.thread)
+            self.mouse.SetupRun(running=True, ShowVideo=True)
+            self.thread.started.connect(self.mouse.run)
+            self.mouse.finished.connect(self.thread.quit)
+            self.mouse.finished.connect(self.mouse.deleteLater)
+            self.thread.finished.connect(self.thread.deleteLater)
+            self.thread.start()
             self.start_button_camera.setText("Зупинити програму із зображенням камери")
-            self.mouse.Run(running=True, ShowVideo=True)
-            
         else:
             self.mouse.Stop()
             self.start_button_camera.setText("Запустити програму із зображенням камери")

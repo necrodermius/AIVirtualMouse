@@ -4,10 +4,12 @@ import HandTrackingModule as htm
 import time
 import autopy 
 import pyautogui
-from PyQt6.QtCore import QThread
+from PyQt6.QtCore import QObject, pyqtSignal
 from settings import wCam, hCam, frameR, smoothening, press_length
 
-class AiVirtualMouse(QThread):
+class AiVirtualMouse(QObject):
+    finished = pyqtSignal()
+    
     def __init__(self) -> None:
         super().__init__()
         self.plocX = 0
@@ -29,10 +31,10 @@ class AiVirtualMouse(QThread):
         self.is_pressed = False
         self.is_dragged = False
         self.drag_time = 0
-        
+
         self.wScr, self.hScr = autopy.screen.size()
         self.fps = None
-        
+
         self.Running = True
 
 
@@ -121,16 +123,20 @@ class AiVirtualMouse(QThread):
         cv2.putText(self.img, str(self.is_dragged), (230, 50), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 0), 3 )
 
 
-    def Run(self, running, ShowVideo):
+    def SetupRun(self, running, ShowVideo):
         self.Running = running
+        self.ShowVideo = ShowVideo
+
+
+    def run(self):
         while self.Running:
             self.FindFingers()
             self.CheckFingers()
-            
+
             if self.fingers[1] == 1 and self.fingers[2] == 0:
                 self.Moving()
                 self.is_pressed = False
-            
+
             if self.fingers[4] == 1 and self.fingers[1] == 1 and self.fingers[2] == 1:
                 self.RightClicking()
             elif self.fingers[1] == 1 and self.fingers[2] == 1:
@@ -138,16 +144,17 @@ class AiVirtualMouse(QThread):
             elif self.fingers[4] == 1 and self.fingers[1] == 0:
                 self.Scrooll()
 
-            
             if self.is_dragged and not self.is_pressed:
                 self.is_dragged = False
                 pyautogui.mouseUp()
-                
-            if ShowVideo:
+
+            if self.ShowVideo:
                 self.FrameCalculating()
                 cv2.imshow("Image", self.img)
                 cv2.waitKey(1)
+        cv2.destroyAllWindows()
+        self.finished.emit()
+
 
     def Stop(self):
         self.Running = False
-        cv2.destroyAllWindows()
