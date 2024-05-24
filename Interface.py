@@ -2,8 +2,9 @@ import AiVirtualMouseProcessing as avmp
 
 import sys
 import threading
+
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QLineEdit, QLabel, QDialog, QFormLayout, QDialogButtonBox
-from PyQt6.QtCore import QThread, pyqtSignal
+from PyQt6.QtCore import QThread, pyqtSignal, Qt
 from PyQt6.QtGui import QIntValidator
 import PySide6.QtAsyncio as QtAsyncio
 import asyncio
@@ -18,11 +19,27 @@ class SettingsWindow(QDialog):
         
         self.setting1 = QLineEdit()
         self.setting1.setValidator(QIntValidator())
-        layout.addRow('Налаштування 1:', self.setting1)
+        layout.addRow('Висота зображення камери:', self.setting1)
         
         self.setting2 = QLineEdit()
         self.setting2.setValidator(QIntValidator())
-        layout.addRow('Налаштування 2:', self.setting2)
+        layout.addRow('Ширина зображення камери:', self.setting2)
+        
+        self.setting3 = QLineEdit()
+        self.setting3.setValidator(QIntValidator())
+        layout.addRow('Висота активної зони:', self.setting3)
+        
+        self.setting4 = QLineEdit()
+        self.setting4.setValidator(QIntValidator())
+        layout.addRow('Ширина активної зони:', self.setting4)
+        
+        self.setting5 = QLineEdit()
+        self.setting5.setValidator(QIntValidator())
+        layout.addRow('Згладжування:', self.setting5)
+        
+        self.setting6 = QLineEdit()
+        self.setting6.setValidator(QIntValidator())
+        layout.addRow('Відносна відстань натискань:', self.setting6)
         
         buttonBox = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         buttonBox.accepted.connect(self.accept)
@@ -49,9 +66,20 @@ class MainWindow(QMainWindow):
         self.settings_button = QPushButton('Налаштування')
         self.settings_button.clicked.connect(self.open_settings)
         
+        self.hints = QLabel("""Піднятий вказівний палець -- переміщення курсору
+Піднятий вказівний та середній пальці -- натискання ЛКМ, у разі торкання кінчиків пальців
+Піднятий вказівний та середній пальці -- затиснення ЛКМ, у разі тривалого торкання кінчиків пальців
+Піднятий вказівний, середній пальці та мізинець -- натискання ПКМ, у разі торкання кінчиків пальців вказівного та середнього
+Піднятий мізинець -- прокрутка колесика мишки вгору, якщо мізинець знаходиться у верхній половині активної зони
+Піднятий мізинець -- прокрутка колисика мишки вниз, якщо мізинець знаходиться у нижній половині активної зони""")
+        # self.hints.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+
         layout.addWidget(self.settings_button)
         layout.addWidget(self.start_button_camera)
         layout.addWidget(self.start_button)
+        layout.addWidget(self.hints)
+        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
         container = QWidget()
         container.setLayout(layout)
