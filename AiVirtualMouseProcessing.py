@@ -137,9 +137,9 @@ class AiVirtualMouse(QObject):
                 self.Moving()
                 self.is_pressed = False
 
-            if self.fingers[4] == 1 and self.fingers[1] == 1 and self.fingers[2] == 1:
+            if self.fingers[3] == 0 and self.fingers[4] == 0 and self.fingers[1] == 1 and self.fingers[2] == 1:
                 self.RightClicking()
-            elif self.fingers[1] == 1 and self.fingers[2] == 1:
+            elif self.fingers[3] == 1 and self.fingers[4] == 1 and self.fingers[1] == 1 and self.fingers[2] == 1:
                 self.Clicking()
             elif self.fingers[4] == 1 and self.fingers[1] == 0:
                 self.Scrooll()

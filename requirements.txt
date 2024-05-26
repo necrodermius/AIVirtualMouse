@@ -1,0 +1,11 @@
+autopy==4.0.0
+mediapipe==0.10.11
+numpy==1.24.4
+opencv_contrib_python==4.9.0.80
+opencv_python==4.9.0.80
+PyAutoGUI==0.9.54
+PyQt6==6.7.0
+PyQt6_sip==13.6.0
+PySide6==6.6.3.1
+PySide6_Addons==6.6.3.1
+PySide6_Essentials==6.6.3.1
