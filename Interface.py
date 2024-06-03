@@ -41,6 +41,10 @@ class SettingsWindow(QDialog):
         self.setting6.setValidator(QIntValidator())
         layout.addRow('Відносна відстань натискань:', self.setting6)
         
+        self.setting7 = QLineEdit()
+        self.setting7.setValidator(QIntValidator())
+        layout.addRow('Відносна відстань натискань:', self.setting7)
+        
         buttonBox = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
