@@ -5,7 +5,7 @@ import time
 import autopy 
 import pyautogui
 from PyQt6.QtCore import QObject, pyqtSignal
-from settings import wCam, hCam, frameR, smoothening, press_length
+from settings import wCam, hCam, frameR, smoothening, press_length, camera
 
 class AiVirtualMouse(QObject):
     finished = pyqtSignal()
@@ -15,13 +15,13 @@ class AiVirtualMouse(QObject):
         self.plocX = 0
         self.plocY = 0
         self.clocX = 0
-        self.clocY = 0
+        self.clocY = 0  
         self.pTime = 0
         self.cTime = 0
         self.x1, self.y1, self.x2, self.y2 = None, None, None, None
         self.pinky = None
 
-        self.cap = cv2.VideoCapture(1)
+        self.cap = cv2.VideoCapture(camera)
         self.cap.set(3, wCam)
         self.cap.set(4, hCam)
         self.img = self.cap.read()

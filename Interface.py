@@ -1,4 +1,6 @@
 import AiVirtualMouseProcessing as avmp
+from settings import wCam, hCam, smoothening, press_length, camera
+
 
 import sys
 import threading
@@ -19,31 +21,28 @@ class SettingsWindow(QDialog):
         
         self.setting1 = QLineEdit()
         self.setting1.setValidator(QIntValidator())
-        layout.addRow('Висота зображення камери:', self.setting1)
+        layout.addRow('Висота активної зони:', self.setting1)
+        self.setting1.setPlaceholderText("1280")
         
         self.setting2 = QLineEdit()
         self.setting2.setValidator(QIntValidator())
-        layout.addRow('Ширина зображення камери:', self.setting2)
+        layout.addRow('Ширина активної зони:', self.setting2)
+        self.setting2.setPlaceholderText("560")
         
         self.setting3 = QLineEdit()
         self.setting3.setValidator(QIntValidator())
-        layout.addRow('Висота активної зони:', self.setting3)
+        layout.addRow('Згладжування:', self.setting3)
+        self.setting3.setPlaceholderText("5")
         
         self.setting4 = QLineEdit()
         self.setting4.setValidator(QIntValidator())
-        layout.addRow('Ширина активної зони:', self.setting4)
+        layout.addRow('Відносна відстань натискань:', self.setting4)
+        self.setting4.setPlaceholderText("40")
         
         self.setting5 = QLineEdit()
         self.setting5.setValidator(QIntValidator())
-        layout.addRow('Згладжування:', self.setting5)
-        
-        self.setting6 = QLineEdit()
-        self.setting6.setValidator(QIntValidator())
-        layout.addRow('Відносна відстань натискань:', self.setting6)
-        
-        self.setting7 = QLineEdit()
-        self.setting7.setValidator(QIntValidator())
-        layout.addRow('Відносна відстань натискань:', self.setting7)
+        layout.addRow('Джерело потоку відео:', self.setting5)
+        self.setting5.setPlaceholderText("0")
         
         buttonBox = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         buttonBox.accepted.connect(self.accept)
@@ -129,9 +128,25 @@ class MainWindow(QMainWindow):
     def open_settings(self):
         settings_dialog = SettingsWindow()
         if settings_dialog.exec() == QDialog.DialogCode.Accepted:
-            print("Налаштування збережені:")
-            print("Налаштування 1:", settings_dialog.setting1.text())
-            print("Налаштування 2:", settings_dialog.setting2.text())
+            print("Налаштування збережені")
+            try:
+                wCam = int(settings_dialog.setting1.text())
+            except:
+                print("hello")
+            try:
+                hCam = int(settings_dialog.setting2.text())
+            except:
+                pass
+            try:
+                smoothening = int(settings_dialog.setting3.text())
+            except:
+                pass
+            try:
+                press_length = int(settings_dialog.setting4.text())
+            except:
+                pass
+            
+            camera = int(settings_dialog.setting5.text())
 
 app = QApplication(sys.argv)
 window = MainWindow()
