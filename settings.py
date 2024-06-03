@@ -1,5 +1,3 @@
-
-
 ##########################
 wCam, hCam = 1280, 560    #setting1, setteing2
 frameR = 60 # Frame Reduction

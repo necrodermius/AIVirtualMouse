@@ -1,5 +1,5 @@
 import AiVirtualMouseProcessing as avmp
-from settings import wCam, hCam, smoothening, press_length, camera
+import settings
 
 
 import sys
@@ -22,27 +22,27 @@ class SettingsWindow(QDialog):
         self.setting1 = QLineEdit()
         self.setting1.setValidator(QIntValidator())
         layout.addRow('Висота активної зони:', self.setting1)
-        self.setting1.setPlaceholderText("1280")
+        self.setting1.setPlaceholderText(str(settings.wCam))
         
         self.setting2 = QLineEdit()
         self.setting2.setValidator(QIntValidator())
         layout.addRow('Ширина активної зони:', self.setting2)
-        self.setting2.setPlaceholderText("560")
+        self.setting2.setPlaceholderText(str(settings.hCam))
         
         self.setting3 = QLineEdit()
         self.setting3.setValidator(QIntValidator())
         layout.addRow('Згладжування:', self.setting3)
-        self.setting3.setPlaceholderText("5")
+        self.setting3.setPlaceholderText(str(settings.smoothening))
         
         self.setting4 = QLineEdit()
         self.setting4.setValidator(QIntValidator())
         layout.addRow('Відносна відстань натискань:', self.setting4)
-        self.setting4.setPlaceholderText("40")
+        self.setting4.setPlaceholderText(str(settings.press_length))
         
         self.setting5 = QLineEdit()
         self.setting5.setValidator(QIntValidator())
         layout.addRow('Джерело потоку відео:', self.setting5)
-        self.setting5.setPlaceholderText("0")
+        self.setting5.setPlaceholderText(str(settings.camera))
         
         buttonBox = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         buttonBox.accepted.connect(self.accept)
@@ -110,7 +110,7 @@ class MainWindow(QMainWindow):
 
     def start_program_camera(self):
         if self.mouse is None:
-            self.mouse = avmp.AiVirtualMouse()
+            self.mouse = avmp.AiVirtualMouse(settings.wCam, settings.hCam, 60, settings.smoothening, settings.press_length, settings.camera)
             self.thread = QThread()
             self.mouse.moveToThread(self.thread)
             self.mouse.SetupRun(running=True, ShowVideo=True)
@@ -130,23 +130,25 @@ class MainWindow(QMainWindow):
         if settings_dialog.exec() == QDialog.DialogCode.Accepted:
             print("Налаштування збережені")
             try:
-                wCam = int(settings_dialog.setting1.text())
-            except:
-                print("hello")
-            try:
-                hCam = int(settings_dialog.setting2.text())
+                settings.wCam = int(settings_dialog.setting1.text())
             except:
                 pass
             try:
-                smoothening = int(settings_dialog.setting3.text())
+                settings.hCam = int(settings_dialog.setting2.text())
             except:
                 pass
             try:
-                press_length = int(settings_dialog.setting4.text())
+                settings.smoothening = int(settings_dialog.setting3.text())
             except:
                 pass
-            
-            camera = int(settings_dialog.setting5.text())
+            try:
+                settings.press_length = int(settings_dialog.setting4.text())
+            except:
+                pass
+            try:
+                settings.camera = int(settings_dialog.setting5.text())
+            except:
+                pass
 
 app = QApplication(sys.argv)
 window = MainWindow()

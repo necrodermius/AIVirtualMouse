@@ -5,13 +5,17 @@ import time
 import autopy 
 import pyautogui
 from PyQt6.QtCore import QObject, pyqtSignal
-from settings import wCam, hCam, frameR, smoothening, press_length, camera
 
 class AiVirtualMouse(QObject):
     finished = pyqtSignal()
     
-    def __init__(self) -> None:
+    def __init__(self, WCAM, HCAM, FRAMER, SMOOTHENING, PRESS_LENGTH, CAMERA) -> None:
         super().__init__()
+        self.wCam = WCAM
+        self.hCam = HCAM
+        self.frameR = FRAMER
+        self.smoothening = SMOOTHENING
+        self.press_length = PRESS_LENGTH
         self.plocX = 0
         self.plocY = 0
         self.clocX = 0
@@ -21,9 +25,9 @@ class AiVirtualMouse(QObject):
         self.x1, self.y1, self.x2, self.y2 = None, None, None, None
         self.pinky = None
 
-        self.cap = cv2.VideoCapture(camera)
-        self.cap.set(3, wCam)
-        self.cap.set(4, hCam)
+        self.cap = cv2.VideoCapture(CAMERA)
+        self.cap.set(3, self.wCam)
+        self.cap.set(4, self.hCam)
         self.img = self.cap.read()
         self.detector = htm.handDetector(maxHands=1)
         self.fingers = []
@@ -55,18 +59,18 @@ class AiVirtualMouse(QObject):
         # 3. Check which fingers are up
         self.fingers = self.detector.fingersUp()
         # print(fingers)
-        cv2.rectangle(self.img, (frameR, frameR), (wCam - frameR, hCam - frameR),
+        cv2.rectangle(self.img, (self.frameR, self.frameR), (self.wCam - self.frameR, self.hCam - self.frameR),
         (255, 0, 255), 2)
 
 
     # 4. Only Index Finger : Moving Mode
     def Moving(self):
         # 5. Convert Coordinates
-        x3 = np.interp(self.x1, (frameR, wCam - frameR), (0, self.wScr))
-        y3 = np.interp(self.y1, (frameR, hCam - frameR), (0, self.hScr))
+        x3 = np.interp(self.x1, (self.frameR, self.wCam - self.frameR), (0, self.wScr))
+        y3 = np.interp(self.y1, (self.frameR, self.hCam - self.frameR), (0, self.hScr))
         # 6. Smoothen Values
-        self.clocX = self.plocX + (x3 - self.plocX) / smoothening
-        self.clocY = self.plocY + (y3 - self.plocY) / smoothening
+        self.clocX = self.plocX + (x3 - self.plocX) / self.smoothening
+        self.clocY = self.plocY + (y3 - self.plocY) / self.smoothening
 
         # 7. Move Mouse
         autopy.mouse.move(self.wScr - self.clocX, self.clocY)
@@ -84,30 +88,30 @@ class AiVirtualMouse(QObject):
             self.Moving()
             
         # 10. Click mouse if distance short
-        if length < press_length and not self.is_pressed:
+        if length < self.press_length and not self.is_pressed:
             cv2.circle(self.img, (lineInfo[4], lineInfo[5]),
             15, (0, 255, 0), cv2.FILLED)
             autopy.mouse.click()
             self.drag_time = time.time()
             
-        elif length < press_length and self.is_pressed and not self.is_dragged and time.time() - self.drag_time > 1:
+        elif length < self.press_length and self.is_pressed and not self.is_dragged and time.time() - self.drag_time > 1:
             self.is_dragged = True
             if self.is_dragged:
                 pyautogui.mouseDown()
                 
-        self.is_pressed = length < press_length
+        self.is_pressed = length < self.press_length
 
 
     def RightClicking(self):
         length, self.img, lineInfo = self.detector.findDistance(8, 12, self.img)
-        if length < press_length and not self.is_pressed:
+        if length < self.press_length and not self.is_pressed:
             cv2.circle(self.img, (lineInfo[4], lineInfo[5]),
             15, (0, 255, 0), cv2.FILLED)
             autopy.mouse.click(autopy.mouse.Button.RIGHT)
 
 
     def Scrooll(self):
-        if self.pinky[1] > hCam / 2:
+        if self.pinky[1] > self.hCam / 2:
             pyautogui.scroll(-50)
         else:
             pyautogui.scroll(50)
